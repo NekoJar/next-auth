@@ -21,7 +21,7 @@ import { FormError } from "../FormError";
 import { FormSuccess } from "../FormSuccess";
 import { register } from "@/actions/register";
 
-export const RegisterForm = async () => {
+export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -115,7 +115,7 @@ export const RegisterForm = async () => {
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button type="submit" className="w-full" disabled={isPending}>
-            Login
+            Create an Account
           </Button>
         </form>
       </Form>

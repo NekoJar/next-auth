@@ -21,7 +21,7 @@ import { FormError } from "../FormError";
 import { FormSuccess } from "../FormSuccess";
 import { login } from "@/actions/login";
 
-export const LoginForm = async () => {
+export const LoginForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -49,7 +49,7 @@ export const LoginForm = async () => {
   return (
     <CardWrapper
       headerLabel="Welcome Back!"
-      backButtonLabel="Don't have an account"
+      backButtonLabel="Don't have an account?"
       backButtonHref="/auth/register"
       showSocial
     >
