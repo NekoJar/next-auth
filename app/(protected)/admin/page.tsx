@@ -45,11 +45,11 @@ const AdminPage = () => {
         <RoleGate allowedRole={UserRole.ADMIN}>
           <FormSuccess message="You are allowed to see this content!" />
         </RoleGate>
-        <div className="flex flex-row items-center rounded-lg border p-3 shadow-md">
+        <div className="flex flex-row justify-between items-center rounded-lg border p-3 shadow-md">
           <p className="text-sm font-medium">Admin-only API Route</p>
           <Button onClick={onApiRouteClick}>Click to test</Button>
         </div>
-        <div className="flex flex-row items-center rounded-lg border p-3 shadow-md">
+        <div className="flex flex-row justify-between items-center rounded-lg border p-3 shadow-md">
           <p className="text-sm font-medium">Admin-only Server action</p>
           <Button onClick={onServerActionClick}>Click to test</Button>
         </div>
