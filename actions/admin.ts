@@ -2,7 +2,6 @@
 
 import { currentRole } from "@/lib/auth";
 import { UserRole } from "@prisma/client";
-import React from "react";
 
 export const admin = async () => {
   const role = await currentRole();
@@ -11,5 +10,5 @@ export const admin = async () => {
     return { success: "Allowed Server Action!" };
   }
 
-  return { error: "Forbidden Server Action!" };
+  return { error: "Forbidden Server Action!" }
 };

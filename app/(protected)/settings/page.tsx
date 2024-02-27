@@ -1,28 +1,12 @@
 "use client";
 
 import * as z from "zod";
-import { logout } from "@/actions/logout";
-import { settings } from "@/actions/settings";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { useCurrentUser } from "@/hooks/useCurentUser";
-import { signOut, useSession } from "next-auth/react";
-import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { SettingSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { FormError } from "@/components/FormError";
-import { FormSuccess } from "@/components/FormSuccess";
+import { useTransition, useState } from "react";
+import { useSession } from "next-auth/react";
+
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -30,19 +14,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SettingsSchema } from "@/schemas";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { settings } from "@/actions/settings";
+import {
+  Form,
+  FormField,
+  FormControl,
+  FormItem,
+  FormLabel,
+  FormDescription,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { FormError } from "@/components/form-error";
+import { FormSuccess } from "@/components/form-success";
 import { UserRole } from "@prisma/client";
-import { Switch } from "@/components/ui/switch";
 
-const SettingPage = () => {
+const SettingsPage = () => {
   const user = useCurrentUser();
 
-  const [error, setError] = useState<string | undefined>("");
-  const [success, setSuccess] = useState<string | undefined>("");
+  const [error, setError] = useState<string | undefined>();
+  const [success, setSuccess] = useState<string | undefined>();
   const { update } = useSession();
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof SettingSchema>>({
-    resolver: zodResolver(SettingSchema),
+  const form = useForm<z.infer<typeof SettingsSchema>>({
+    resolver: zodResolver(SettingsSchema),
     defaultValues: {
       password: undefined,
       newPassword: undefined,
@@ -50,10 +54,10 @@ const SettingPage = () => {
       email: user?.email || undefined,
       role: user?.role || undefined,
       isTwoFactorEnabled: user?.isTwoFactorEnabled || undefined,
-    },
+    }
   });
 
-  const onSubmit = (values: z.infer<typeof SettingSchema>) => {
+  const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
     startTransition(() => {
       settings(values)
         .then((data) => {
@@ -68,16 +72,21 @@ const SettingPage = () => {
         })
         .catch(() => setError("Something went wrong!"));
     });
-  };
+  }
 
-  return (
+  return ( 
     <Card className="w-[600px]">
       <CardHeader>
-        <p className="text-2xl font-semibold text-center">⚙️ Settings</p>
+        <p className="text-2xl font-semibold text-center">
+          ⚙️ Settings
+        </p>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+          <form 
+            className="space-y-6" 
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
             <div className="space-y-4">
               <FormField
                 control={form.control}
@@ -171,8 +180,12 @@ const SettingPage = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={UserRole.ADMIN}>Admin</SelectItem>
-                        <SelectItem value={UserRole.USER}>User</SelectItem>
+                        <SelectItem value={UserRole.ADMIN}>
+                          Admin
+                        </SelectItem>
+                        <SelectItem value={UserRole.USER}>
+                          User
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -184,7 +197,7 @@ const SettingPage = () => {
                   control={form.control}
                   name="isTwoFactorEnabled"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-md">
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                       <div className="space-y-0.5">
                         <FormLabel>Two Factor Authentication</FormLabel>
                         <FormDescription>
@@ -205,12 +218,17 @@ const SettingPage = () => {
             </div>
             <FormError message={error} />
             <FormSuccess message={success} />
-            <Button type="submit">Save</Button>
+            <Button
+              disabled={isPending}
+              type="submit"
+            >
+              Save
+            </Button>
           </form>
         </Form>
       </CardContent>
     </Card>
-  );
-};
-
-export default SettingPage;
+   );
+}
+ 
+export default SettingsPage;

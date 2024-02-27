@@ -1,10 +1,11 @@
-import NextAuth, { type DefaultSession } from "next-auth";
-import authConfig from "./auth.config";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { db } from "./lib/db";
-import { getUserById } from "./data/user";
+import NextAuth from "next-auth";
 import { UserRole } from "@prisma/client";
-import { getTwoFactorConfirmationByUserId } from "./data/twoFactorConfirmation";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+
+import { db } from "@/lib/db";
+import authConfig from "@/auth.config";
+import { getUserById } from "@/data/user";
+import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 import { getAccountByUserId } from "./data/account";
 
 export const {
@@ -12,6 +13,7 @@ export const {
   auth,
   signIn,
   signOut,
+  update,
 } = NextAuth({
   pages: {
     signIn: "/auth/login",
@@ -27,10 +29,12 @@ export const {
   },
   callbacks: {
     async signIn({ user, account }) {
+      // Allow OAuth without email verification
       if (account?.provider !== "credentials") return true;
 
-      const existingUser = await getUserById(user.id!);
+      const existingUser = await getUserById(user.id);
 
+      // Prevent sign in without email verification
       if (!existingUser?.emailVerified) return false;
 
       if (existingUser.isTwoFactorEnabled) {
@@ -38,10 +42,9 @@ export const {
           existingUser.id
         );
 
-        console.log(twoFactorConfirmation);
-
         if (!twoFactorConfirmation) return false;
 
+        // Delete two factor confirmation for next sign in
         await db.twoFactorConfirmation.delete({
           where: { id: twoFactorConfirmation.id },
         });
