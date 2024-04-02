@@ -3,12 +3,6 @@
 
 **Node version 18.7.x**
 
-### Cloning the repository
-
-```shell
-git clone https://github.com/AntonioErdeljac/next-auth-v5-advanced-guide.git
-```
-
 ### Install packages
 
 ```shell
